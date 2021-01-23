@@ -3,8 +3,8 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const app = express()
 const port = process.env.PORT
-const { postUrl, getOriginalUrl } = require('./controller')
-const db = require('./db');
+const { postUrl, getOriginalUrl } = require('./controllers')
+const db = require('./services/db');
 
 app.use(bodyParser.json())
 app.use(

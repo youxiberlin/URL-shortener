@@ -1,4 +1,4 @@
-const db = require('./db');
+const db = require('./services/db');
 const { nanoid } = require('nanoid');
 
 const postUrl = async (req, res, next) => {
