@@ -21,9 +21,16 @@ const postUrl = async (req, res, next) => {
 const getOriginalUrl = async (req, res, next) => {
   db.query(`SELECT req_url FROM urls WHERE short_id='${req.params.id}'`)
     .then(async result => {
-      const { req_url } = await result.rows[0];
-      console.log('result', req_url)
-      res.redirect(`http://${req_url}`)
+      const dbResult = await result.rows[0];
+      if (dbResult) {
+        const { req_url } = dbResult;
+        res.redirect(`http://${req_url}`)
+      } else {
+        res.status(400).json({
+          status: "Not found",
+          result: "The URL doesn't exist."
+        })
+      }
     })
     .catch(e => console.error(e.stack))
 };
