@@ -18,6 +18,17 @@ const postUrl = async (req, res, next) => {
   });
 };
 
+const getOriginalUrl = async (req, res, next) => {
+  db.query(`SELECT req_url FROM urls WHERE short_id='${req.params.id}'`)
+    .then(async result => {
+      const { req_url } = await result.rows[0];
+      console.log('result', req_url)
+      res.redirect(`http://${req_url}`)
+    })
+    .catch(e => console.error(e.stack))
+};
+
 module.exports = {
-  postUrl
+  postUrl,
+  getOriginalUrl
 };
