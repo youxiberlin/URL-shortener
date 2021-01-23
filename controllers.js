@@ -8,7 +8,13 @@ const postUrl = async (req, res, next) => {
   
   await db.query('INSERT INTO urls (req_url, short_id) VALUES ($1, $2)', [url, id])
     .then(result => console.log('result', result))
-    .catch(e => console.error(e.stack))
+    .catch(e => {
+      console.error(e.stack);
+      res.status(500).json({
+        status: "Error",
+        result: "Server error"
+      });
+    });
 
   res.status(200).json({
       status: "Success!",
@@ -19,7 +25,13 @@ const postUrl = async (req, res, next) => {
 const getOriginalUrl = async (req, res, next) => {
   db.query('INSERT INTO ips (req_ip, short_id) VALUES ($1, $2)', [req.ip, req.params.id])
     .then(result => console.log(result))
-    .catch(e => console.error(e.stack))
+    .catch(e => {
+      console.error(e.stack);
+      res.status(500).json({
+        status: "Error",
+        result: "Server error"
+      });
+    })
 
   db.query(`SELECT req_url FROM urls WHERE short_id='${req.params.id}'`)
     .then(async result => {
@@ -34,7 +46,7 @@ const getOriginalUrl = async (req, res, next) => {
         })
       }
     })
-    .catch(e => console.error(e.stack))
+    .catch(e => console.error(e.stack));
 };
 
 const getStats = async (req, res, next) => {
@@ -52,7 +64,7 @@ const getStats = async (req, res, next) => {
   res.status(200).json({
     status: "Success",
     data,
-  })
+  });
 }; 
 
 module.exports = {
