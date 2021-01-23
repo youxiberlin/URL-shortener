@@ -10,7 +10,6 @@ const postUrl = async (req, res, next) => {
     .then(result => console.log('result', result))
     .catch(e => console.error(e.stack))
 
-
   res.status(200).json({
       status: "Success!",
       result: `The shortened URL is ${shortUrl}`
@@ -38,7 +37,26 @@ const getOriginalUrl = async (req, res, next) => {
     .catch(e => console.error(e.stack))
 };
 
+const getStats = async (req, res, next) => {
+  const results = await db.query('SELECT short_id, COUNT (short_id) FROM ips GROUP BY short_id')
+    .catch(e => {
+      console.error(e.stack)
+      res.status(500).json({
+        status: "Error",
+        result: "Server error"
+      })
+    });
+
+  const data = results.rows;
+
+  res.status(200).json({
+    status: "Success",
+    data,
+  })
+}; 
+
 module.exports = {
   postUrl,
-  getOriginalUrl
+  getOriginalUrl,
+  getStats
 };
