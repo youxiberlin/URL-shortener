@@ -60,10 +60,14 @@ const getStats = async (req, res, next) => {
     });
 
   const data = results.rows;
+  const dataObj = data.reduce((acc, curr) => {
+    acc[curr.short_id] = parseInt(curr.count, 10)
+    return acc;
+  }, {});
 
   res.status(200).json({
     status: "Success",
-    data,
+    data: dataObj
   });
 }; 
 
