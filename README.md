@@ -10,7 +10,7 @@
 
 1. Clone this repository locally
 
-`https://github.com/youxiberlin/URL-shortener.git`
+`git clone https://github.com/youxiberlin/URL-shortener.git`
 
 2. Install the dependencies
 
@@ -57,7 +57,7 @@ If the request succeeds, you get the shortened URL in the response like this:
 }
 ```
 
-**2. To use the shortned URL**
+**2. To use the shortened URL**
 
 Copy and paste the short ID on your browser. If the shortned URL is `tier.app/ur_33RAX` and you are running the application on `localhost:3000`, then please hit the URL: `localhost:3000/ur_33RAX`. Because the application is not yet deployed with `tier.app`.
 
