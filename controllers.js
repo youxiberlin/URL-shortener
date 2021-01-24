@@ -18,7 +18,7 @@ const postUrl = async (req, res, next) => {
 
   res.status(200).json({
       status: "Success!",
-      result: `The shortened URL is ${shortUrl}`
+      result: shortUrl
   });
 };
 
