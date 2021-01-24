@@ -21,10 +21,10 @@
 | Variable     |           | Example, Memo|
 | ------------- |:--------:| -----:|
 | PORT | Optional      | Default value: 3000  |
-| PG_USER  | **Required** |     |
+| **PG_USER**  | **Required** |     |
 | PG_HOST  | Optional      | Default value: localhost  |
-| PG_DB | **Required**     |    |
-| PG_PASS | **Required**      |    |
+| **PG_DB** | **Required**     |    |
+| PG_PASS | Optional      | Default value: null  |
 | PG_PORT | Optional      | Default value: 5432  |
 | REDIS_HOST  | Optional      | Default value: localhost  |
 | REDIS_PORT | Optional      | Default value: 6379  |
