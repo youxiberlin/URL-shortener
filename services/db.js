@@ -1,13 +1,18 @@
-const { Pool, Client } = require('pg')
-const pool = new Pool({
-  user: process.env.PG_USER,
-  host: process.env.PG_HOST || 'localhost',
-  database: process.env.PG_DB,
-  password: process.env.PG_PASS || null,
-  port: process.env.PG_PORT || 5432,
-})
+const { Pool } = require('pg')
+const { user, host, database, password, port } = require('./../config').postgres;
 
+const connPool = {};
+
+const connect = (endpoint) => {
+	if (!connPool[endpoint]) {
+		connPool[endpoint] = new Pool({ user, host, database, password, port }); 
+		console.log(`Postgres: Connected on port ${endpoint}`);
+	}
+	return connPool[endpoint];
+};
+
+const db = connect(port)
 
 module.exports = {
-  query: (text, params) => pool.query(text, params),
+  query: (text, params) => db.query(text, params),
 }

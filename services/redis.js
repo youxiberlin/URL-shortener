@@ -1,10 +1,22 @@
 const redis = require("redis");
-const client = redis.createClient({
-  host: process.env.REDIS_HOST || 'localhost',
-  port: process.env.REDIS_PORT || 6379, 
-});
+const { host, port } = require('./../config').redis;
+
+const client = redis.createClient({ host, port});
 
 const { promisify } = require("util");
+
+client.on('connect', () => {
+  console.log(`Redis: Connected on port ${port}`);
+});
+
+client.on('error', (err) => {
+  console.log(`Redis: ${err.message}`);
+});
+
+client.on('reconnecting', () => {
+  console.log('Redis: reconnecting...');
+});
+
 const getAsync = promisify(client.get).bind(client);
 const setAsync = promisify(client.set).bind(client);
 
