@@ -9,6 +9,7 @@ PostgresSQL
 ### How to set up the application
 
 1. Clone this repository locally
+
 `https://github.com/youxiberlin/URL-shortener.git`
 
 2. Install the dependencies
@@ -25,6 +26,8 @@ PostgresSQL
 | PG_DB | **Required**     |    |
 | PG_PASS | **Required**      |    |
 | PG_PORT | Optional      | Default value: 5432  |
+| REDIS_HOST  | Optional      | Default value: localhost  |
+| REDIS_PORT | Optional      | Default value: 6379  |
    
 
 ### How to run the application

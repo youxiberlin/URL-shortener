@@ -1,18 +1,15 @@
-const db = require('./services/db');
 const { nanoid } = require('nanoid');
-const redis = require("redis");
-const client = redis.createClient();
-const { promisify } = require("util");
-const getAsync = promisify(client.get).bind(client);
+const db = require('./services/db');
+const { getAsync, setAsync } = require('./services/redis');
 
 const postUrl = async (req, res, next) => {
   const { url } = req.body;
   const id = nanoid(8);
   const shortUrl = `tier.app/${id}`;
-  client.set(id, url, (err, res) => {
-    if (err) console.error('Redis error', err)
-  });
-  
+
+  setAsync(id, url)
+    .catch(err => console.error('Redis error', err));
+
   await db.query('INSERT INTO urls (req_url, short_id) VALUES ($1, $2)', [url, id])
     .then(result => console.log(`Inserted the URL with id ${id} to DB`))
     .catch(e => {
@@ -29,7 +26,6 @@ const postUrl = async (req, res, next) => {
   });
 };
 
-
 const getOriginalUrl = async (req, res, next) => {
   const { id } = req.params;
 
@@ -42,8 +38,9 @@ const getOriginalUrl = async (req, res, next) => {
       });
     })
 
-  if (redisRes) res.redirect(`http://${redisRes}`)
-  else {
+  if (redisRes) {
+    res.redirect(`http://${redisRes}`)
+  } else {
     const dbRes = await db.query(`SELECT req_url FROM urls WHERE short_id='${id}'`)
       .catch(e => {
         console.error("DB Error", e.stack);
