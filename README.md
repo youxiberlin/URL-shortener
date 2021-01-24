@@ -2,12 +2,14 @@
 
 **Requirement**　
 
-NodeJS newer than v12.14.1
+NodeJS newer than v12.14.1  
+
 PostgresSQL
 
 ### How to set up the application
 
 1. Clone this repository locally
+`https://github.com/youxiberlin/URL-shortener.git`
 
 2. Install the dependencies
 
@@ -31,13 +33,14 @@ PostgresSQL
 
 ### How to use the application
 
-1. To get a shortened URL for a certain URL, please send a `POST` request to the endpoint `/shorturl`
+**1. To get a shortened URL for a certain URL**  
+Please send a `POST` request to the endpoint `/shorturl`
 
-Example when using httpie
+Example with `httpie`
 ```
-http POST localhost:3000/shorturl url=${target url}
+http POST localhost:3000/shorturl url=${target_url}
 ```
-Please replace `${target url}` with your target URL like this:
+Please replace `${target_url}` with your target URL like this:
 ```
 http POST localhost:3000/shorturl url=https://www.tier.app/de/tier-partners-with-fantasmo/
 ```
@@ -50,13 +53,13 @@ If the request succeeds, you get the shortened URL in the response like this:
 }
 ```
 
-2. To use the shortned URL
+**2. To use the shortned URL**
 
 Copy and paste the short ID on your browser. If the shortned URL is `tier.app/ur_33RAX` and you are running the application on `localhost:3000`, then please hit the URL: `localhost:3000/ur_33RAX`. Because the application is not yet deployed with `tier.app`.
 
 The browser should redirect you to the original URL! 🚀
 
-3. To get the stats of the access
+**3. To get the stats of the access**
 
 
 Interested in how many access you've got to the shortened URL?
