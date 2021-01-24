@@ -59,6 +59,10 @@ const getOriginalUrl = async (req, res) => {
     if (result) {
       const { req_url } = result;
       res.redirect(`http://${req_url}`);
+
+      setAsync(id, req_url)
+        .catch(err => console.error('Redis error', err));
+
       db.query('INSERT INTO ips (req_ip, short_id) VALUES ($1, $2)', [req.ip, id])
         .then(result => console.log(`Inserted ip ${req.ip} to ${id} in DB`))
         .catch(e => {
