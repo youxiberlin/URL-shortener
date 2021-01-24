@@ -2,9 +2,9 @@
 
 **Requirement**　
 
-NodeJS newer than v12.14.1  
-
-PostgresSQL
+- NodeJS newer than v12.14.1
+- PostgresSQL
+- Redis
 
 ### How to set up the application
 
@@ -32,7 +32,8 @@ PostgresSQL
 
 ### How to run the application
 
-`yarn start` or `npm start` 
+1. Start local PostgresSQL and Redis server
+2. Start the application with `yarn start` or `npm start`
 
 ### How to use the application
 
