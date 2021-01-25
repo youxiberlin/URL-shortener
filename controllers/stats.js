@@ -12,7 +12,7 @@ const getStats = async (req, res) => {
 
   const data = results.rows;
   const dataObj = data.reduce((acc, curr) => {
-    acc[curr.short_id] = parseInt(curr.count, 10)
+    acc[curr.short_id] = parseInt(curr.count, 10);
     return acc;
   }, {});
 

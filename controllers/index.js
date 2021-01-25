@@ -6,4 +6,4 @@ module.exports = {
   getStats,
   postUrl,
   getOriginalUrl
-}
+};

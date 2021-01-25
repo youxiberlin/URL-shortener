@@ -39,7 +39,7 @@ const getOriginalUrl = async (req, res) => {
         .catch(err => console.error('Redis error', err));
 
       db.query('INSERT INTO ips (req_ip, short_id) VALUES ($1, $2)', [req.ip, id])
-        .then(result => console.log(`Inserted ip ${req.ip} to ${id} in DB`))
+        .then(() => console.log(`Inserted ip ${req.ip} to ${id} in DB`))
         .catch(e => {
           console.error(e.stack);
         });

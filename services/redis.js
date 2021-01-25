@@ -1,9 +1,8 @@
 const redis = require("redis");
+const { promisify } = require("util");
 const { host, port } = require('./../config').redis;
 
 const client = redis.createClient({ host, port});
-
-const { promisify } = require("util");
 
 client.on('connect', () => {
   console.log(`Redis: Connected on port ${port}`);
@@ -23,4 +22,4 @@ const setAsync = promisify(client.set).bind(client);
 module.exports = {
   getAsync,
   setAsync,
-}
+};
