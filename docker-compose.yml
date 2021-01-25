@@ -1,0 +1,35 @@
+version: '3'
+services:
+  app:
+    container_name: url-shortener
+    restart: always
+    build: .
+    ports:
+      - '8080:3000'
+    links:
+      - redis_common
+      - postgres
+    environment:
+      - PORT=${PORT}
+      - REDIS_HOST=redis_common
+      - REDIS_PORT=6379
+      - PG_HOST=host.docker.internal
+      - PG_DB=${PG_DB}
+      - PG_PASS=${PG_PASS}
+      - PG_USER=${PG_USER}
+      - PG_PORT=5432
+  redis_common:
+    image: redis:5-alpine
+    volumes:
+      - ./redis.conf:/etc/redis/redis.conf
+    restart: on-failure
+    command: redis-server /etc/redis/redis.conf
+  postgres:
+    image: postgres:13
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=${PG_DB}
+      - POSTGRES_PASSWORD=${PG_PASS}
+      - POSTGRES_USER=${PG_USER}
