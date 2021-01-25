@@ -32,8 +32,17 @@
 
 ### How to run the application
 
+**Manual running**
 1. Start local PostgresSQL and Redis server
 2. Start the application with `yarn start` or `npm start`
+
+The application starts running on `localhost:3000` - when using default setting
+
+**By using Docker**  
+
+Start the main application, Redis and Postgres by hitting `docker-compose up`
+
+The application starts running on `localhost:8080`
 
 ### How to use the application
 
