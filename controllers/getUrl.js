@@ -1,30 +1,5 @@
-const { nanoid } = require('nanoid');
-const db = require('./services/db');
-const { getAsync, setAsync } = require('./services/redis');
-
-const postUrl = async (req, res) => {
-  const { url } = req.body;
-  const id = nanoid(8);
-  const shortUrl = `tier.app/${id}`;
-
-  setAsync(id, url)
-    .catch(err => console.error('Redis error', err));
-
-  await db.query('INSERT INTO urls (req_url, short_id) VALUES ($1, $2)', [url, id])
-    .then(result => console.log(`Inserted the URL with id ${id} to DB`))
-    .catch(e => {
-      console.error(e.stack);
-      res.status(500).json({
-        status: "Error",
-        result: "Server error"
-      });
-    });
-
-  res.status(200).json({
-      status: "Success!",
-      result: shortUrl
-  });
-};
+const db = require('../services/db');
+const { getAsync, setAsync } = require('../services/redis');
 
 const getOriginalUrl = async (req, res) => {
   const { id } = req.params;
@@ -77,30 +52,6 @@ const getOriginalUrl = async (req, res) => {
   }
 };
 
-const getStats = async (req, res) => {
-  const results = await db.query('SELECT short_id, COUNT (short_id) FROM ips GROUP BY short_id')
-    .catch(e => {
-      console.error(e.stack)
-      res.status(500).json({
-        status: "Error",
-        result: "Server error"
-      })
-    });
-
-  const data = results.rows;
-  const dataObj = data.reduce((acc, curr) => {
-    acc[curr.short_id] = parseInt(curr.count, 10)
-    return acc;
-  }, {});
-
-  res.status(200).json({
-    status: "Success",
-    data: dataObj
-  });
-};
-
 module.exports = {
-  postUrl,
   getOriginalUrl,
-  getStats
 };
