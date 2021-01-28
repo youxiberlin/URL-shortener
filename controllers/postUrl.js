@@ -3,6 +3,23 @@ const db = require('../services/db');
 const { setAsync } = require('../services/redis');
 
 const postUrl = async (req, res) => {
+  const reqKey = Object.keys(req.body)[0]
+  if (reqKey && reqKey !== "url") {
+    res.status(400).json({
+      status: "Bad Request",
+      message: "Please use url as a request key"
+    })
+    return;
+  }
+
+  if (!reqKey) {
+    res.status(400).json({
+      status: "Bad Request",
+      message: "Please add url that you want to shorten. Ex.) url=www.google.com"
+    })
+    return;
+  }
+
   const { url } = req.body;
   const id = nanoid(8);
   const shortUrl = `tier.app/${id}`;

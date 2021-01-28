@@ -44,7 +44,7 @@ const getOriginalUrl = async (req, res) => {
           console.error(e.stack);
         });
     } else {
-      res.status(400).json({
+      res.status(404).json({
           status: "Not found",
           result: "The URL doesn't exist."
         })
