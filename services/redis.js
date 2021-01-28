@@ -20,6 +20,7 @@ const getAsync = promisify(client.get).bind(client);
 const setAsync = promisify(client.set).bind(client);
 
 module.exports = {
+  client,
   getAsync,
   setAsync,
 };
