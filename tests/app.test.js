@@ -34,6 +34,18 @@ describe('POST /shorturl - get a new short url', () => {
       .end(done)
   })
 
+  it('should return 400 when the request key is not url', (done) => {
+    return request(app)
+      .post('/shorturl')
+      .send({ ul: "google.com"})
+      .expect(400)
+      .expect(res => {
+        expect(res.body.status).toBe("Bad Request")
+        expect(res.body.message).toMatch("Please use url as a request key")
+      })
+      .end(done)
+  })
+
   it('should return 400 when the request body is empty', (done) => {
     return request(app)
       .post('/shorturl')
