@@ -1,21 +1,43 @@
 const request = require('supertest');
 const { app } = require('../app');
+const { port } = require('../config')
 const dbConfig = require('../config').postgres;
 const redisConfig = require('../config').redis;
+const pgTable = require('../config').postgresTable;
 const db = require('../services/db');
 const redis = require('../services/redis');
 
 let redisClient;
+let server;
+
 beforeAll(() => {
-  redisClient = redis.connect(redisConfig);
-  db.connect(dbConfig);
+  server = app.listen(port, async() => {
+    console.log(`App running on port ${port}`);
+    redisClient = redis.connect(redisConfig);
+    await db.connect(dbConfig);
+    await db.query(pgTable.dropUrls)
+      .then(() => console.log('Postgres executed query to drop table urls'))
+      .catch(err => console.error(err.stack));
+    await db.query(pgTable.dropIps)
+      .then(() => console.log('Postgres executed query to drop table ips'))
+      .catch(err => console.error(err.stack));
+    await db.query(pgTable.createUrls)
+      .then(() => console.log('Postgres executed query to create table urls'))
+      .catch(err => console.error(err.stack));
+    await db.query(pgTable.createIps)
+      .then(() => console.log('Postgres executed query to create table ips'))
+      .catch(err => console.error(err.stack));
+  })
 })
 
-afterAll((done) => {
-  redisClient.quit(() => {
-     console.log('redis client quit')
-     done();
-  });
+afterAll(async (done) => {
+  server.close(() => {
+    console.log('App closed.');
+    redisClient.quit(() => {
+       console.log('redis client quit')
+       done();
+    });
+  })
 });
 
 describe('GET /', function() {
