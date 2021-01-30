@@ -97,6 +97,9 @@ If the request was success, you should get the data like this:
    
 It showes how many access each shortned URL got so far.
 
+### To test the application   
+You can run the functional tests with `npm run test` or `yarn test`
+
 
 
 ----

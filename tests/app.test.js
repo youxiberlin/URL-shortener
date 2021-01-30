@@ -4,30 +4,29 @@ const { port } = require('../config')
 const dbConfig = require('../config').postgres;
 const redisConfig = require('../config').redis;
 const pgTable = require('../config').postgresTable;
-const db = require('../services/db');
+const pg = require('../services/db');
 const redis = require('../services/redis');
 
 let redisClient;
 let server;
+let db;
 
-beforeAll(() => {
-  server = app.listen(port, async() => {
-    console.log(`App running on port ${port}`);
-    redisClient = redis.connect(redisConfig);
-    await db.connect(dbConfig);
-    await db.query(pgTable.dropUrls)
-      .then(() => console.log('Postgres executed query to drop table urls'))
-      .catch(err => console.error(err.stack));
-    await db.query(pgTable.dropIps)
-      .then(() => console.log('Postgres executed query to drop table ips'))
-      .catch(err => console.error(err.stack));
-    await db.query(pgTable.createUrls)
-      .then(() => console.log('Postgres executed query to create table urls'))
-      .catch(err => console.error(err.stack));
-    await db.query(pgTable.createIps)
-      .then(() => console.log('Postgres executed query to create table ips'))
-      .catch(err => console.error(err.stack));
-  })
+beforeAll(async () => {
+  server = await app.listen(port, () => console.log(`App running on port ${port}`));
+  redisClient = await redis.connect(redisConfig);
+  db = await pg.connect(dbConfig);
+  await db.query(pgTable.dropUrls)
+    .then(() => console.log('Postgres executed query to drop table urls'))
+    .catch(err => console.error(err.stack));
+  await db.query(pgTable.dropIps)
+    .then(() => console.log('Postgres executed query to drop table ips'))
+    .catch(err => console.error(err.stack));
+  await db.query(pgTable.createUrls)
+    .then(() => console.log('Postgres executed query to create table urls'))
+    .catch(err => console.error(err.stack));
+  await db.query(pgTable.createIps)
+    .then(() => console.log('Postgres executed query to create table ips'))
+    .catch(err => console.error(err.stack));
 })
 
 afterAll(async (done) => {
@@ -73,7 +72,7 @@ describe('POST /shorturl - get a new short url', () => {
       .expect(400)
       .expect(res => {
         expect(res.body.status).toBe("Bad Request")
-        expect(res.body.message).toMatch("Please use url as a request key")
+        expect(res.body.message).toBe("Please use url as a request key")
       })
       .end(done)
   })
@@ -85,8 +84,40 @@ describe('POST /shorturl - get a new short url', () => {
       .expect(400)
       .expect(res => {
         expect(res.body.status).toBe("Bad Request")
-        expect(res.body.message).toMatch("Please add url that you want to shorten. Ex.) url=www.google.com")
+        expect(res.body.message).toBe("Please add url that you want to shorten. Ex.) url=www.google.com")
       })
       .end(done)
   })
 });
+
+describe('GET /id', () => {
+  beforeEach(async () => {
+    await db.query('INSERT INTO urls (req_url, short_id) VALUES ($1, $2)', ['www.tier.app', 'GtiRylUB'])
+      .then(() => console.log(`Inserted the URL with id GtiRylUB to DB`))
+      .catch(e => console.error(e.stack));
+  });
+
+  afterEach(async () => {
+    await db.query(`DELETE FROM urls WHERE short_id='GtiRylUB'`)
+      .then(() => console.log(`Deleted the id GtiRylUB`))
+      .catch(e => console.error(e.stack));
+  })
+
+  it('should return 302 when the request was sent to the id', (done) => {
+    return request(app)
+      .get('/GtiRylUB')
+      .expect(302)
+      .end(done)
+  })
+
+  it('should return 404 when the id does not exit', (done) => {
+    return request(app)
+      .get('/GtiRylU')
+      .expect(404)
+      .end(done)
+      .expect(res => {
+        expect(res.body.status).toBe("Not found")
+        expect(res.body.result).toBe("The URL doesn't exist.")
+      })
+  })
+})
