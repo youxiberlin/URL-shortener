@@ -12,5 +12,13 @@ module.exports = {
   redis: {
     host: process.env.REDIS_HOST || 'localhost',
     port: process.env.REDIS_PORT || 6379,
+  },
+  postgresTable: {
+    createUrls: `CREATE TABLE IF NOT EXISTS urls
+    (req_url TEXT NOT NULL,short_id CHAR (8) UNIQUE NOT NULL)`,
+    createIps: `CREATE TABLE IF NOT EXISTS ips
+    (req_ip TEXT NOT NULL,short_id CHAR (8) NOT NULL)`,
+    dropUrls: `DROP TABLE IF EXISTS urls`,
+    dropIps: `DROP TABLE IF EXISTS ips`,
   }
 };

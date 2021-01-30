@@ -2,16 +2,18 @@ const { app } = require('./app.js')
 const { port } = require('./config');
 const dbConfig = require('./config').postgres;
 const redisConfig = require('./config').redis;
+const pgTable = require('./config').postgresTable;
 const db = require('./services/db');
 const redis = require('./services/redis');
-
-const initalizeTable_urls = `CREATE TABLE IF NOT EXISTS urls (req_url TEXT NOT NULL,short_id CHAR (8) UNIQUE NOT NULL)`
-const initalizeTable_ips = `CREATE TABLE IF NOT EXISTS ips (req_ip TEXT NOT NULL,short_id CHAR (8) NOT NULL)`
 
 app.listen(port, async () => {
   console.log(`App running on port ${port}`);
   redis.connect(redisConfig);
-  await db.connect(dbConfig);
-  db.query(initalizeTable_urls);
-  db.query(initalizeTable_ips);
+  db.connect(dbConfig);
+  await db.query(pgTable.createUrls)
+    .then(() => console.log('Postgres executed query to create table urls'))
+    .catch(err => console.error(err.stack));
+  await db.query(pgTable.createIps)
+    .then(() => console.log('Postgres executed query to create table ips'))
+    .catch(err => console.error(err.stack));
 });
