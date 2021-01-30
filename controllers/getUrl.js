@@ -15,11 +15,6 @@ const getOriginalUrl = async (req, res) => {
 
   if (redisRes) {
     res.redirect(`http://${redisRes}`);
-    db.query('INSERT INTO ips (req_ip, short_id) VALUES ($1, $2)', [req.ip, id])
-      .then(() => console.log(`Inserted ip ${req.ip} to ${id} in DB`))
-      .catch(e => {
-        console.error(e.stack);
-      });
   } else {
     const dbRes = await db.query(`SELECT req_url FROM urls WHERE short_id='${id}'`)
       .catch(e => {
@@ -31,18 +26,13 @@ const getOriginalUrl = async (req, res) => {
       });
 
     const result = dbRes.rows[0];
+
     if (result) {
       const { req_url } = result;
       res.redirect(`http://${req_url}`);
 
       setAsync(id, req_url)
         .catch(err => console.error('Redis error', err));
-
-      db.query('INSERT INTO ips (req_ip, short_id) VALUES ($1, $2)', [req.ip, id])
-        .then(() => console.log(`Inserted ip ${req.ip} to ${id} in DB`))
-        .catch(e => {
-          console.error(e.stack);
-        });
     } else {
       res.status(404).json({
           status: "Not found",
@@ -50,6 +40,12 @@ const getOriginalUrl = async (req, res) => {
         })
     }
   }
+
+  db.query('INSERT INTO ips (req_ip, short_id) VALUES ($1, $2)', [req.ip, id])
+    .then(() => console.log(`Inserted ip ${req.ip} to ${id} in DB`))
+    .catch(e => {
+      console.error(e.stack);
+    });
 };
 
 module.exports = {
