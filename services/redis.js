@@ -1,26 +1,37 @@
 const redis = require("redis");
 const { promisify } = require("util");
-const { host, port } = require('./../config').redis;
+const redisConfig = require('./../config').redis;
 
-const client = redis.createClient({ host, port});
+const connPool = {};
 
-client.on('connect', () => {
-  console.log(`Redis: Connected on port ${port}`);
-});
+const connect = (config) => {
+  const { host, port } = config;
+  
+	if (!connPool[port]) {
+    const client = redis.createClient({ host, port})
+    connPool[port] = client;
+    
+    client.on('connect', () => {
+      console.log(`Redis: Connected on port ${port}`);
+    });
+    
+    client.on('error', (err) => {
+      console.log(`Redis: ${err.message}`);
+    });
+    
+    client.on('reconnecting', () => {
+      console.log('Redis: reconnecting...');
+    });
+	}
+	return connPool[port];
+};
 
-client.on('error', (err) => {
-  console.log(`Redis: ${err.message}`);
-});
-
-client.on('reconnecting', () => {
-  console.log('Redis: reconnecting...');
-});
-
+const client = connect(redisConfig);
 const getAsync = promisify(client.get).bind(client);
 const setAsync = promisify(client.set).bind(client);
 
 module.exports = {
-  client,
+  connect: (config) => connect(config),
   getAsync,
   setAsync,
 };

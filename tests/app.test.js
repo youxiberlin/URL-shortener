@@ -1,10 +1,20 @@
 const request = require('supertest');
 const { app } = require('../app');
-const { client } = require('../services/redis');
+const dbConfig = require('../config').postgres;
+const redisConfig = require('../config').redis;
+const db = require('../services/db');
+const redis = require('../services/redis');
+
+let redisClient;
+beforeAll(() => {
+  redisClient = redis.connect(redisConfig);
+  db.connect(dbConfig);
+})
 
 afterAll((done) => {
-  client.quit(() => {
-      done();
+  redisClient.quit(() => {
+     console.log('redis client quit')
+     done();
   });
 });
 
