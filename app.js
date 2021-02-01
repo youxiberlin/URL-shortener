@@ -1,8 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const { port } = require('./config');
 const { postUrl, getOriginalUrl, getStats } = require('./controllers');
-const db = require('./services/db');
 
 const app = express();
 

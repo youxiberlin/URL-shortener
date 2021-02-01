@@ -110,7 +110,7 @@ describe('GET /id', () => {
       .end(done)
   })
 
-  it('should return 404 when the id does not exit', (done) => {
+  it('should return 404 when the id does not exist', (done) => {
     return request(app)
       .get('/GtiRylU')
       .expect(404)
