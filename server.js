@@ -8,8 +8,8 @@ const redis = require('./services/redis');
 
 app.listen(port, async () => {
   console.log(`App running on port ${port}`);
-  redis.connect(redisConfig);
-  db.connect(dbConfig);
+  await redis.connect(redisConfig);
+  await db.connect(dbConfig);
   await db.query(pgTable.createUrls)
     .then(() => console.log('Postgres executed query to create table urls'))
     .catch(err => console.error(err.stack));
